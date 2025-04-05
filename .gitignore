@@ -1,17 +1,8 @@
-# Not-for-production files and directories
-archive/
-testing/
+# cmkr
+build*/
+cmake-build*/
+CMakerLists.txt
+CMakeLists.txt.user
 
-# CMake devmachine-specific config
-CMakeSettings.json
-
-# Build system temporary files and directories
-Build/
-out/
-.vs/
-
-# Binaries
-lib/
-sys/
-
-
+# local environment
+.vscode/

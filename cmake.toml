@@ -1,0 +1,118 @@
+[cmake]
+version = "3.10"
+cmkr-include = "cmake/cmkr.cmake"
+
+[options]
+KTL_BUILD_TESTS = { value = true, help = "Build the KTL test driver." }
+
+[variables]
+CMAKE_MODULE_PATH = "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+ENABLE_WDK_EXTENDED_CPP_FEATURES = true
+TARGET_WINVER = "_WIN32_WINNT_WIN7"
+TARGET_NTDDI_VERSION = "NTDDI_WIN7"
+
+[project]
+name = "ktl"
+languages = ["CXX", "ASM_MASM"]
+include-before = ["cmake/msvc-configurations.cmake"]
+
+[find-package.WDK]
+
+[template.wdk-library]
+type = "static"
+add-function = "wdk_add_library"
+compile-features = ["cxx_std_20"]
+
+[template.wdk-driver]
+type = "executable"
+add-function = "wdk_add_driver"
+compile-features = ["cxx_std_20"]
+
+[target.ktl-runtime-x64]
+type = "static"
+alias = "ktl::ktl-runtime::x64"
+sources = ["ktl_runtime/src/exceptions/x64/*.asm"]
+
+[target.ktl-runtime]
+type = "wdk-library"
+alias = "ktl::ktl-runtime"
+sources = ["ktl_runtime/src/*.cpp", "ktl_runtime/src/exceptions/*.cpp"]
+x64.sources = ["ktl_runtime/src/exceptions/x64/*.cpp"]
+x64.link-libraries = ["ktl::ktl-runtime::x64"]
+include-directories = ["ktl_runtime/include"]
+private-compile-options = [
+    "/MP", # Enable multi-processor compilation
+    "/O2", # Max optimization level
+    "/Oi", # Enable intrinsic functions
+    "/Ot", # Favor fast code
+    "/Oy", # Enable frame pointer omission
+    "/Gy", # Enable COMDAT folding for functions
+    "/Gw", # Enable COMDAT folding for variables
+    "/GS", # Enable buffer security checks
+]
+private-link-options = [
+    "/OPT:REF",                           # Remove unreferenced functions and data
+    "/INCLUDE:verify_seh",                # Include SEH verification
+    "/INCLUDE:verify_seh_in_cxx_handler", # Include SEH verification in C++ handlers
+    "/OPT:ICF",                           # Enable identical COMDAT folding
+]
+private-compile-definitions = [
+    "_CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES=0",
+    "KTL_ENABLE_EXTENDED_ALIGNED_STORAGE",
+]
+
+[target.ktl]
+type = "wdk-library"
+alias = "ktl::ktl"
+sources = ["ktl/src/**.cpp"]
+include-directories = ["ktl/include"]
+link-libraries = ["ktl::ktl-runtime"]
+private-compile-options = [
+    "/MP", # Enable multi-processor compilation
+    "/O2", # Max optimization level
+    "/Oi", # Enable intrinsic functions
+    "/Ot", # Favor fast code
+    "/Oy", # Enable frame pointer omission
+    "/Gy", # Enable COMDAT folding for functions
+    "/Gw", # Enable COMDAT folding for variables
+    "/GS", # Enable buffer security checks
+]
+private-link-options = [
+    "/OPT:REF",                           # Remove unreferenced functions and data
+    "/INCLUDE:verify_seh",                # Include SEH verification
+    "/INCLUDE:verify_seh_in_cxx_handler", # Include SEH verification in C++ handlers
+    "/OPT:ICF",                           # Enable identical COMDAT folding
+]
+private-compile-definitions = [
+    "FMT_EXCEPTIONS",
+    "FMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0",
+    "_CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES=0",
+]
+
+[template.ktl-driver]
+type = "executable"
+add-function = "wdk_add_driver"
+compile-features = ["cxx_std_20"]
+link-libraries = ["ktl::ktl"]
+private-compile-options = [
+    "/MP", # Enable multi-processor compilation
+    "/O2", # Max optimization level
+    "/Oi", # Enable intrinsic functions
+    "/Ot", # Favor fast code
+    "/Oy", # Enable frame pointer omission
+    "/Gy", # Enable COMDAT folding for functions
+    "/Gw", # Enable COMDAT folding for variables
+    "/GS", # Enable buffer security checks
+]
+private-link-options = [
+    "/OPT:REF",                           # Remove unreferenced functions and data
+    "/INCLUDE:verify_seh",                # Include SEH verification
+    "/INCLUDE:verify_seh_in_cxx_handler", # Include SEH verification in C++ handlers
+    "/OPT:ICF",                           # Enable identical COMDAT folding
+]
+
+[target.ktl-tests]
+type = "ktl-driver"
+condition = "build-tests"
+sources = ["ktl_tests/src/**.cpp"]
+include-directories = ["ktl_tests/include"]

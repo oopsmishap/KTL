@@ -1,7 +1,7 @@
 # KTL
+
 Kernel Template Library is open-source library providing CRT environment, STL-style containers and RAII tools for Windows Kernel programming.
 
-* [Status](#status)
 * [Features](#features)
   * [C Runtime environment](#build-requirements)
   * [C++ Standard Library implementation](#C++-standard-library-implementation)
@@ -12,11 +12,11 @@ Kernel Template Library is open-source library providing CRT environment, STL-st
 * [Examples](#samples)
 * [Roadmap for the near future](#roadmap-for-the-near-future)
 
-## Status
+## Credits
 
-| **License**                                                                                                                             | **Lines of Code**                                            |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| [![License](https://img.shields.io/badge/License-MIT-lightblue.svg)](https://github.com/DymOK93/KTL/blob/master/LICENSE.md) | ![](https://sloc.xyz/github/DymOK93/KTL/)
+* Forked from [DymOK92's](https://github.com/DymOK93) [KTL](https://github.com/DymOK93/KTL)
+* [avakar](https://github.com/avakar) for his [vcrtl](https://github.com/avakar/vcrtl) project which enables exceptions
+* Extension from [wdk_template](https://github.com/build-cpp/wdk_template) to expand on the concept to have a C/C++ runtime
 
 ## Features
 
@@ -47,7 +47,7 @@ Kernel Template Library is open-source library providing CRT environment, STL-st
     * `<vector>`
     * Lock-free queue, `node_allocator` and some auxiliary algorithms 
     * [fmt](https://github.com/fmtlib/fmt/) as a string formatting library 
-    * Designed in C++17, feel free to build with C++20
+    * Tested with C++20
 
 
 * CMake
@@ -61,9 +61,8 @@ _Complete documentation in progress_.
 You can use KTL directly as driver CMake project subdirectory or link with pre-built KTL binaries applying `find_package()`.
 
 It includes **3 static libraries**: 
-* `basic_runtime.lib` (CRT)
-* `cpp_runtime.lib` (C++ tools)
-* `minifilter_runtime.lib` (optional Filesystem Mini-Filter support)
+* `ktl-runtime.lib` (CRT)
+* `ktl.lib` (C++ tools)
 
 ### CMakeLists.txt to build with a pre-built KTL:
 ```cmake
@@ -101,8 +100,7 @@ It includes **3 static libraries**:
 ### Build requirements:
 * WDK10
 * Visual Studio 2019 (not tested on older versions)
-* CMake 3.0 and higher
-* [FindWDK](https://github.com/DymOK93/FindWDK/tree/develop) (used as a Git submodule)
+* CMake 3.10 and higher
 
 ## Examples
 * [CoroDriverSample](https://github.com/DymOK93/CoroDriverSample) - a simple driver demonstrating the use of C++20 coroutines in kernel mode 
