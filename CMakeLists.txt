@@ -155,9 +155,7 @@ target_compile_features(ktl PUBLIC
 	cxx_std_20
 )
 
-target_compile_definitions(ktl PRIVATE
-	FMT_EXCEPTIONS
-	FMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0
+target_compile_definitions(ktl PUBLIC
 	_CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES=0
 )
 

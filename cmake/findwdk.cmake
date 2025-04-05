@@ -36,6 +36,11 @@
 
 # Thanks to yousif for this trick with the registry!
 # Query Windows SDK root directory.
+
+if(POLICY CMP0074)
+    cmake_policy(SET CMP0074 NEW)
+endif()
+
 get_filename_component(WDK_ROOT
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots;KitsRoot10]"
     ABSOLUTE)
@@ -159,8 +164,12 @@ file(GLOB WDK_LIBRARIES "${WDK_ROOT}/Lib/${WDK_LIB_VERSION}/km/${WDK_PLATFORM}/*
 foreach(LIBRARY IN LISTS WDK_LIBRARIES)
     get_filename_component(LIBRARY_NAME ${LIBRARY} NAME_WE)
     string(TOUPPER ${LIBRARY_NAME} LIBRARY_NAME)
-    add_library(WDK::${LIBRARY_NAME} INTERFACE IMPORTED)
-    set_property(TARGET WDK::${LIBRARY_NAME} PROPERTY INTERFACE_LINK_LIBRARIES ${LIBRARY})
+
+    # Protect against multiple inclusion, which would fail when already imported targets are added once more.
+    if(NOT TARGET WDK::${LIBRARY_NAME})
+        add_library(WDK::${LIBRARY_NAME} INTERFACE IMPORTED)
+        set_property(TARGET WDK::${LIBRARY_NAME} PROPERTY INTERFACE_LINK_LIBRARIES ${LIBRARY})
+    endif()
 endforeach(LIBRARY)
 
 unset(WDK_LIBRARIES)

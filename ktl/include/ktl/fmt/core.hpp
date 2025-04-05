@@ -103,13 +103,8 @@
 #endif
 
 // Check if exceptions are disabled.
-#ifndef FMT_EXCEPTIONS
-#if (defined(__GNUC__) && !defined(__EXCEPTIONS)) || FMT_MSC_VER && !_HAS_EXCEPTIONS
-#define FMT_EXCEPTIONS 0
-#else
+
 #define FMT_EXCEPTIONS 1
-#endif
-#endif
 
 #if __cplusplus == 201103L || __cplusplus == 201402L
 #if defined(__INTEL_COMPILER) || defined(__PGI)

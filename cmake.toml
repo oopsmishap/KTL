@@ -83,11 +83,7 @@ private-link-options = [
     "/INCLUDE:verify_seh_in_cxx_handler", # Include SEH verification in C++ handlers
     "/OPT:ICF",                           # Enable identical COMDAT folding
 ]
-private-compile-definitions = [
-    "FMT_EXCEPTIONS",
-    "FMT_USE_NONTYPE_TEMPLATE_PARAMETERS=0",
-    "_CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES=0",
-]
+compile-definitions = ["_CRT_SECURE_CPP_OVERLOAD_SECURE_NAMES=0"]
 
 [template.ktl-driver]
 type = "executable"
