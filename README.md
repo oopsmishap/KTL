@@ -60,49 +60,49 @@ _Complete documentation in progress_.
 ## Installation & Usage
 You can use KTL directly as driver CMake project subdirectory or link with pre-built KTL binaries applying `find_package()`.
 
-It includes **3 static libraries**: 
+It includes **2 static libraries**: 
 * `ktl-runtime.lib` (CRT)
 * `ktl.lib` (C++ tools)
 
-### CMakeLists.txt to build with a pre-built KTL:
-```cmake
-    project(MyDriver CXX)
+### Basic cmake.toml for a driver
+```toml
+[cmake]
+version = "3.10"
+cmkr-include = "cmake/cmkr.cmake"
 
-    find_package(WDK REQUIRED)  # Windows Driver Kit
-    find_package(KTL REQUIRED)
+[variables]
+CMAKE_MODULE_PATH = "${CMAKE_CURRENT_SOURCE_DIR}/cmake"
 
-    wdk_add_driver(
-      ${DRIVER_NAME} minifilter.cpp
-        CUSTOM_ENTRY_POINT KtlDriverEntry   # Required for C and C++ Runtime initialization and destruction
-		    EXTENDED_CPP_FEATURES               # Exceptions handling enabled
-    )
-    target_include_directories(
-	    ${DRIVER_NAME} PUBLIC
-		    ${KTL_INCLUDE_DIR}
-		    ${KTL_MODULES_DIR}                  # Lock-Free tools
-		    ${KTL_RUNTIME_INCLUDE_DIR}
-		    ${CMAKE_INCLUDE_CURRENT_DIR}
-    )
-    target_link_libraries(
-      ${DRIVER_NAME} PRIVATE
-        ktl::basic_runtime
-        ktl::minifilter_runtime
-        ktl::cpp_runtime
-    )
-    wdk_sign_driver(        # Driver signing (in this example - using given certificate)
-	    ${DRIVER_NAME}
-		    ${YOUR_CERTIFICATE_NAME}
-		    CERTIFICATE_PATH ${YOUR_CERTIFICATE_PATH}
-		    TIMESTAMP_SERVER ${YOUR_TIMESTAMP_SERVER} # Default is timestamp.verisign.com
-    )
+[project]
+name = "KTL-Example"
+languages = ["CXX"]
+include-before = ["cmake/msvc-configurations.cmake"]
+
+[fetch-content]
+ktl = { git = "https://github.com/oopsmishap/ktl" }
+
+[find-package.WDK]
+
+[template.ktl-driver]
+type = "executable"
+add-function = "wdk_add_driver"
+compile-features = ["cxx_std_20"]
+link-libraries = ["ktl::ktl"]
+
+[target.ktl-example]
+type = "ktl-driver"
+sources = ["src/**.cpp"]
+include-directories = ["include"]
 ```
 
 ### Build requirements:
-* WDK10
+* [WDK10](https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk)
 * Visual Studio 2019 (not tested on older versions)
+* [cmkr](https://cmkr.build/)
 * CMake 3.10 and higher
 
 ## Examples
+* [KTL-Example](https://github.com/oopsmishap/KTL-Example) - A barebones driver utilizing KTL
 * [CoroDriverSample](https://github.com/DymOK93/CoroDriverSample) - a simple driver demonstrating the use of C++20 coroutines in kernel mode 
 
 ## Roadmap for the near future 
